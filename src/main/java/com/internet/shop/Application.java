@@ -23,7 +23,7 @@ public class Application {
             System.out.println(product.toString());
         }
         System.out.println("------------------------------------\n");
-        productService.delete(samsung);
+        productService.deleteById(samsung.getId());
         for (Product product : productService.getAllProducts()) {
             System.out.println(product.toString());
         }
