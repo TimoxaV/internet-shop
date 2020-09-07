@@ -8,7 +8,7 @@ public class Order {
     private List<Product> products;
     private Long userId;
 
-    public Order(List<Product> products, Long userId) {
+    public Order(Long userId) {
         this.products = new ArrayList<>();
         this.userId = userId;
     }
@@ -35,5 +35,11 @@ public class Order {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" + "id=" + id + ", products=" + products
+                + ", userId=" + userId + '}';
     }
 }
