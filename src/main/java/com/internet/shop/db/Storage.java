@@ -18,26 +18,22 @@ public class Storage {
     private static Long orderId = 0L;
 
     public static void addProduct(Product product) {
-        productId++;
-        product.setId(productId);
+        product.setId(++productId);
         products.add(product);
     }
 
     public static void addUser(User user) {
-        userId++;
-        user.setId(userId);
+        user.setId(++userId);
         users.add(user);
     }
 
     public static void addShoppingCart(ShoppingCart shoppingCart) {
-        shoppingCartId++;
-        shoppingCart.setId(shoppingCartId);
+        shoppingCart.setId(++shoppingCartId);
         shoppingCarts.add(shoppingCart);
     }
 
     public static void addOrder(Order order) {
-        orderId++;
-        order.setId(orderId);
+        order.setId(++orderId);
         orders.add(order);
     }
 }

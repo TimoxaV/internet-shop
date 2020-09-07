@@ -15,5 +15,5 @@ public interface ShoppingCartDao {
 
     boolean deleteById(Long shoppingCartId);
 
-    List<ShoppingCart> getAllCarts();
+    List<ShoppingCart> getAll();
 }
