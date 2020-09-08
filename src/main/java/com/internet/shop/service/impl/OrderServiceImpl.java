@@ -30,8 +30,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order create(Order item) {
+        return orderDao.create(item);
+    }
+
+    @Override
     public Order get(Long id) {
         return orderDao.getById(id).get();
+    }
+
+    @Override
+    public Order update(Order item) {
+        return orderDao.update(item);
     }
 
     @Override
