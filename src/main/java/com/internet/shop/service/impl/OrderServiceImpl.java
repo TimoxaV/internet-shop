@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order get(Long id) {
-        return orderDao.getById(id).get();
+        return orderDao.get(id).get();
     }
 
     @Override
