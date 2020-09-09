@@ -25,23 +25,23 @@ public class Application {
         productService.create(samsung);
         productService.create(apple);
         productService.create(appleX);
-        for (Product product : productService.getAllProducts()) {
+        for (Product product : productService.getAll()) {
             System.out.println(product.toString());
         }
         System.out.println("------------------------------------\n");
-        productService.deleteById(samsung.getId());
-        for (Product product : productService.getAllProducts()) {
+        productService.delete(samsung.getId());
+        for (Product product : productService.getAll()) {
             System.out.println(product.toString());
         }
         System.out.println("------------------------------------\n");
         apple.setPrice(new BigDecimal(2500));
         productService.update(apple);
-        for (Product product : productService.getAllProducts()) {
+        for (Product product : productService.getAll()) {
             System.out.println(product.toString());
         }
         System.out.println("------------------------------------\n");
-        productService.deleteById(appleX.getId());
-        for (Product product : productService.getAllProducts()) {
+        productService.delete(appleX.getId());
+        for (Product product : productService.getAll()) {
             System.out.println(product.toString());
         }
         System.out.println("------------------------------------\n");

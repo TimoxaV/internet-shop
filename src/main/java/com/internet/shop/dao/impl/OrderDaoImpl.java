@@ -18,7 +18,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Optional<Order> getById(Long orderId) {
+    public Optional<Order> get(Long orderId) {
         return Storage.orders.stream()
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst();
