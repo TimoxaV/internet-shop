@@ -85,7 +85,7 @@
 
     <servlet>
         <servlet-name>addToCart</servlet-name>
-        <servlet-class>com.internet.shop.controllers.AddProductToCart</servlet-class>
+        <servlet-class>com.internet.shop.controllers.AddProductToCartController</servlet-class>
     </servlet>
 
     <servlet-mapping>
