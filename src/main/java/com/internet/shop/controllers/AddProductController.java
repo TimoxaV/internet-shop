@@ -29,6 +29,6 @@ public class AddProductController extends HttpServlet {
         BigDecimal price = BigDecimal.valueOf(Long.parseLong(priceString));
         Product newProduct = new Product(name, price);
         productService.create(newProduct);
-        resp.sendRedirect(req.getContextPath() + "/");
+        resp.sendRedirect(req.getContextPath() + "/products/manage");
     }
 }

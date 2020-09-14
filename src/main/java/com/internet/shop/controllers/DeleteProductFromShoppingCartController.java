@@ -22,8 +22,8 @@ public class DeleteProductFromShoppingCartController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         ShoppingCart shoppingCart = shoppingCartService.getByUserId(USER_ID);
-        Long productID = Long.valueOf(req.getParameter("id"));
-        Product product = productService.get(productID);
+        Long productId = Long.valueOf(req.getParameter("id"));
+        Product product = productService.get(productId);
         shoppingCartService.deleteProduct(shoppingCart, product);
         resp.sendRedirect(req.getContextPath() + "/cart/products");
     }

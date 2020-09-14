@@ -17,6 +17,6 @@ public class DeleteOrderController extends HttpServlet {
             throws IOException {
         Long orderId = Long.valueOf(req.getParameter("id"));
         orderService.delete(orderId);
-        resp.sendRedirect(req.getContextPath() + "/order/all");
+        resp.sendRedirect(req.getContextPath() + "/orders/all");
     }
 }

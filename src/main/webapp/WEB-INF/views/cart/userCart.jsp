@@ -26,7 +26,7 @@
     </c:forEach>
 </table>
 <a href="${pageContext.request.contextPath}/">main page</a> <br>
-<form method="post" action="${pageContext.request.contextPath}/order/add">
+<form method="post" action="${pageContext.request.contextPath}/orders/complete">
     <button type="submit">Create order</button>
 </form>
 </body>
