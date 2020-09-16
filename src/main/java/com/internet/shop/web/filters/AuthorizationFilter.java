@@ -36,6 +36,7 @@ public class AuthorizationFilter implements Filter {
         protectedUrls.put("/cart/products/add", Set.of(Role.RoleName.USER));
         protectedUrls.put("/cart/products/delete", Set.of(Role.RoleName.USER));
         protectedUrls.put("/orders/complete", Set.of(Role.RoleName.USER));
+        protectedUrls.put("/user/orders", Set.of(Role.RoleName.USER));
     }
 
     @Override
@@ -60,7 +61,6 @@ public class AuthorizationFilter implements Filter {
 
     @Override
     public void destroy() {
-
     }
 
     private boolean isAuthorized(User user, Set<Role.RoleName> authorizedRoles) {
