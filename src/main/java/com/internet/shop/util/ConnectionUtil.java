@@ -16,8 +16,8 @@ public class ConnectionUtil {
 
     public static Connection getConnection() {
         Properties properties = new Properties();
-        properties.put("user", "root");
-        properties.put("password", "admin");
+        properties.put("user", "test");
+        properties.put("password", "testPwd");
         String url = "jdbc:mysql://localhost:3306/internet_shop?serverTimezone=UTC";
         try {
             return DriverManager.getConnection(url,properties);
