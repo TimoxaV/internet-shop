@@ -7,11 +7,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class TestDB {
-    public static void main(String[] args) {
-        Injector injector = Injector.getInstance("com.internet.shop");
-        ProductService productService =
-                (ProductService) injector.getInstance(ProductService.class);
+    private static final Injector injector = Injector.getInstance("com.internet.shop");
+    private static ProductService productService =
+            (ProductService) injector.getInstance(ProductService.class);
 
+    public static void main(String[] args) {
         Product xiaomi = new Product("xiaomi", new BigDecimal(1000));
 
         System.out.println("Create");
