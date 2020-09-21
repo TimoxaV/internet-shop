@@ -40,7 +40,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
     @Override
     public Optional<Product> get(Long id) {
         String query = "SELECT product_id, name, price FROM products "
-                + "WHERE product_id = ? AND deleted = 0";
+                + "WHERE product_id = ? AND deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, id);
@@ -58,7 +58,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
     @Override
     public Product update(Product product) {
         String query = "UPDATE products SET name = ?, price = ? "
-                + "WHERE product_id = ? AND deleted = 0";
+                + "WHERE product_id = ? AND deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, product.getName());
@@ -73,7 +73,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
 
     @Override
     public boolean deleteById(Long id) {
-        String query = "UPDATE products SET deleted = 1 WHERE product_id = ?";
+        String query = "UPDATE products SET deleted = TRUE WHERE product_id = ?";
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, id);
@@ -85,7 +85,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
 
     @Override
     public List<Product> getAll() {
-        String query = "SELECT product_id, name, price FROM products WHERE deleted = 0";
+        String query = "SELECT product_id, name, price FROM products WHERE deleted = FALSE";
         List<Product> products = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
