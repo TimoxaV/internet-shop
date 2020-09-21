@@ -66,7 +66,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
             statement.setLong(3, product.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update product", e);
+            throw new DataProcessingException("Can't update product with id " + product.getId(), e);
         }
         return product;
     }
@@ -94,7 +94,7 @@ public class ProductDaoJdbcImpl implements ProductDao {
                 products.add(getProductFromResultSet(resultSet));
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get the product", e);
+            throw new DataProcessingException("Can't get all products", e);
         }
         return products;
     }
