@@ -18,21 +18,22 @@ import java.util.Optional;
 @Dao
 public class ProductDaoJdbcImpl implements ProductDao {
     @Override
-    public Product create(Product item) {
+    public Product create(Product product) {
         String query = "INSERT INTO products (name, price) VALUES (?, ?)";
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement insert =
+            PreparedStatement statement =
                     connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            insert.setString(1, item.getName());
-            insert.setBigDecimal(2, item.getPrice());
-            insert.executeUpdate();
-            ResultSet generatedKey = insert.getGeneratedKeys();
+            statement.setString(1, product.getName());
+            statement.setBigDecimal(2, product.getPrice());
+            statement.executeUpdate();
+            ResultSet generatedKey = statement.getGeneratedKeys();
             while (generatedKey.next()) {
-                item.setId(generatedKey.getLong(1));
+                product.setId(generatedKey.getLong(1));
             }
-            return item;
+            return product;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create product", e);
+            throw new DataProcessingException("Can't create product " + product.getName()
+                    + " with price " + product.getPrice(), e);
         }
     }
 
@@ -41,53 +42,45 @@ public class ProductDaoJdbcImpl implements ProductDao {
         String query = "SELECT product_id, name, price FROM products "
                 + "WHERE product_id = ? AND deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement select = connection.prepareStatement(query);
-            select.setLong(1, id);
-            ResultSet productRow = select.executeQuery();
-            if (productRow.next()) {
-                Long productId = productRow.getLong("product_id");
-                String name = productRow.getString("name");
-                BigDecimal price = productRow.getBigDecimal("price");
-                Product product = new Product(name, price);
-                product.setId(productId);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Product product = getProductFromResultSet(resultSet);
                 return Optional.of(product);
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't get the product", e);
+            throw new DataProcessingException("Can't get the product with id " + id, e);
         }
         return Optional.empty();
     }
 
     @Override
-    public Product update(Product item) {
+    public Product update(Product product) {
         String query = "UPDATE products SET name = ?, price = ? "
                 + "WHERE product_id = ? AND deleted = 0";
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement update = connection.prepareStatement(query);
-            update.setString(1, item.getName());
-            update.setBigDecimal(2, item.getPrice());
-            update.setLong(3, item.getId());
-            update.executeUpdate();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, product.getName());
+            statement.setBigDecimal(2, product.getPrice());
+            statement.setLong(3, product.getId());
+            statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update product", e);
         }
-        return item;
+        return product;
     }
 
     @Override
     public boolean deleteById(Long id) {
         String query = "UPDATE products SET deleted = 1 WHERE product_id = ?";
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement delete = connection.prepareStatement(query);
-            delete.setLong(1, id);
-            int deletedRow = delete.executeUpdate();
-            if (deletedRow == 1) {
-                return true;
-            }
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setLong(1, id);
+            return statement.executeUpdate() == 1;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't update product", e);
+            throw new DataProcessingException("Can't delete product with id " + id, e);
         }
-        return false;
     }
 
     @Override
@@ -95,19 +88,24 @@ public class ProductDaoJdbcImpl implements ProductDao {
         String query = "SELECT product_id, name, price FROM products WHERE deleted = 0";
         List<Product> products = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement select = connection.prepareStatement(query);
-            ResultSet productRow = select.executeQuery();
-            while (productRow.next()) {
-                Long productId = productRow.getLong("product_id");
-                String name = productRow.getString("name");
-                BigDecimal price = productRow.getBigDecimal("price");
-                Product product = new Product(name, price);
-                product.setId(productId);
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Product product = getProductFromResultSet(resultSet);
                 products.add(product);
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get the product", e);
         }
         return products;
+    }
+
+    private Product getProductFromResultSet(ResultSet resultSet) throws SQLException {
+        Long productId = resultSet.getLong("product_id");
+        String name = resultSet.getString("name");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        Product product = new Product(name, price);
+        product.setId(productId);
+        return product;
     }
 }
