@@ -53,7 +53,7 @@ public class ShoppingCartDaoJdbcImpl implements ShoppingCartDao {
             throw new DataProcessingException("Can't create shopping cart "
                     + shoppingCart.toString(), e);
         }
-        createCartsProducts(shoppingCart.getId(), shoppingCart.getProducts());
+        createCartsProducts(shoppingCart);
         return shoppingCart;
     }
 
@@ -77,29 +77,33 @@ public class ShoppingCartDaoJdbcImpl implements ShoppingCartDao {
 
     @Override
     public ShoppingCart update(ShoppingCart shoppingCart) {
-        String query = "UPDATE shopping_carts_products SET deleted = TRUE WHERE cart_id = ?";
+        String query = "UPDATE shopping_carts SET user_id = ? WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, shoppingCart.getId());
+            statement.setLong(1, shoppingCart.getUserId());
+            statement.setLong(2, shoppingCart.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update shopping cart with id "
                     + shoppingCart.getId(), e);
         }
-        createCartsProducts(shoppingCart.getId(), shoppingCart.getProducts());
+        deleteShoppingCartProducts(shoppingCart);
+        createCartsProducts(shoppingCart);
         return shoppingCart;
     }
 
     @Override
     public boolean deleteById(Long id) {
         String query = "UPDATE shopping_carts SET deleted = TRUE WHERE id = ?";
+        boolean deleted;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            return statement.executeUpdate() == 1;
+            deleted = statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete cart with id " + id, e);
         }
+        return deleted && deleteShoppingCartProducts(id);
     }
 
     @Override
@@ -149,18 +153,43 @@ public class ShoppingCartDaoJdbcImpl implements ShoppingCartDao {
         }
     }
 
-    private boolean createCartsProducts(Long cartId, List<Product> products) {
+    private boolean createCartsProducts(ShoppingCart shoppingCart) {
         String query = "INSERT INTO shopping_carts_products(cart_id, product_id) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, cartId);
-            for (Product product : products) {
+            statement.setLong(1, shoppingCart.getId());
+            for (Product product : shoppingCart.getProducts()) {
                 statement.setLong(2, product.getId());
                 statement.executeUpdate();
             }
             return true;
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't create products for cart id " + cartId, e);
+            throw new DataProcessingException("Can't create products for cart id "
+                    + shoppingCart.getId(), e);
+        }
+    }
+
+    private boolean deleteShoppingCartProducts(ShoppingCart shoppingCart) {
+        String query = "UPDATE shopping_carts_products SET deleted = TRUE WHERE cart_id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, shoppingCart.getId());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't update shopping cart with id "
+                    + shoppingCart.getId(), e);
+        }
+    }
+
+    private boolean deleteShoppingCartProducts(Long cartId) {
+        String query = "UPDATE shopping_carts_products SET deleted = TRUE WHERE cart_id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, cartId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DataProcessingException("Can't update shopping cart with id "
+                    + cartId, e);
         }
     }
 }

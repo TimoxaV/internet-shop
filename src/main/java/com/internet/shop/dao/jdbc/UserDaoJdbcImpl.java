@@ -21,7 +21,7 @@ import java.util.Set;
 public class UserDaoJdbcImpl implements UserDao {
     @Override
     public Optional<User> findByLogin(String login) {
-        User user = new User();
+        User user;
         String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
                 + "AND login = ?";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -30,6 +30,8 @@ public class UserDaoJdbcImpl implements UserDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 user = getUserFromResultSet(resultSet);
+            } else {
+                return Optional.empty();
             }
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find user with login " + login, e);
@@ -61,7 +63,7 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     public Optional<User> get(Long id) {
-        User user = new User();
+        User user;
         String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
                 + "AND id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -70,9 +72,11 @@ public class UserDaoJdbcImpl implements UserDao {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 user = getUserFromResultSet(resultSet);
+            } else {
+                return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new DataProcessingException("Can't find user with id " + id, e);
+            throw new DataProcessingException("Can't get user with id " + id, e);
         }
         user.setRoles(getUsersRoles(user));
         return Optional.of(user);
