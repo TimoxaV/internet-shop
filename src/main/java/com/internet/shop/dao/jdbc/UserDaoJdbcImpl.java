@@ -21,21 +21,21 @@ import java.util.Set;
 public class UserDaoJdbcImpl implements UserDao {
     @Override
     public Optional<User> findByLogin(String login) {
+        User user = new User();
         String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
                 + "AND login = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, login);
             ResultSet resultSet = statement.executeQuery();
-            User user = new User();
             if (resultSet.next()) {
                 user = getUserFromResultSet(resultSet);
-                user.setRoles(getUsersRoles(user));
             }
-            return Optional.of(user);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find user with login " + login, e);
         }
+        user.setRoles(getUsersRoles(user));
+        return Optional.of(user);
     }
 
     @Override
@@ -61,21 +61,21 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     public Optional<User> get(Long id) {
+        User user = new User();
         String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
                 + "AND id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            User user = new User();
             if (resultSet.next()) {
                 user = getUserFromResultSet(resultSet);
-                user.setRoles(getUsersRoles(user));
             }
-            return Optional.of(user);
         } catch (SQLException e) {
             throw new DataProcessingException("Can't find user with id " + id, e);
         }
+        user.setRoles(getUsersRoles(user));
+        return Optional.of(user);
     }
 
     @Override
@@ -113,20 +113,22 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
+        List<User> users = new ArrayList<>();
         String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
-            List<User> users = new ArrayList<>();
             while (resultSet.next()) {
                 User user = getUserFromResultSet(resultSet);
-                user.setRoles(getUsersRoles(user));
                 users.add(user);
             }
-            return users;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't get all users", e);
         }
+        for (User user : users) {
+            user.setRoles(getUsersRoles(user));
+        }
+        return users;
     }
 
     private User getUserFromResultSet(ResultSet resultSet) throws SQLException {
