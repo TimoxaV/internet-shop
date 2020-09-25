@@ -80,7 +80,7 @@ public class OrderDaoJdbcImpl implements OrderDao {
 
     @Override
     public Order update(Order order) {
-        String query = "UPDATE orders SET user_id = ? WHERE order_id = ?";
+        String query = "UPDATE orders SET user_id = ? WHERE order_id = ? AND deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, order.getUserId());
@@ -153,7 +153,7 @@ public class OrderDaoJdbcImpl implements OrderDao {
         }
     }
 
-    private boolean createOrdersProducts(Order order) {
+    private void createOrdersProducts(Order order) {
         String query = "INSERT INTO orders_products(order_id, product_id) VALUES(?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -162,7 +162,6 @@ public class OrderDaoJdbcImpl implements OrderDao {
                 statement.setLong(2, product.getId());
                 statement.executeUpdate();
             }
-            return true;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't create products for order id "
                     + order.getId(), e);
