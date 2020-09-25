@@ -95,15 +95,13 @@ public class ShoppingCartDaoJdbcImpl implements ShoppingCartDao {
     @Override
     public boolean deleteById(Long id) {
         String query = "UPDATE shopping_carts SET deleted = TRUE WHERE id = ?";
-        boolean deleted;
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setLong(1, id);
-            deleted = statement.executeUpdate() > 0;
+            return statement.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DataProcessingException("Can't delete cart with id " + id, e);
         }
-        return deleted && deleteShoppingCartProducts(id);
     }
 
     @Override
@@ -178,18 +176,6 @@ public class ShoppingCartDaoJdbcImpl implements ShoppingCartDao {
         } catch (SQLException e) {
             throw new DataProcessingException("Can't update shopping cart with id "
                     + shoppingCart.getId(), e);
-        }
-    }
-
-    private boolean deleteShoppingCartProducts(Long cartId) {
-        String query = "UPDATE shopping_carts_products SET deleted = TRUE WHERE cart_id = ?";
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setLong(1, cartId);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            throw new DataProcessingException("Can't update shopping cart with id "
-                    + cartId, e);
         }
     }
 }
