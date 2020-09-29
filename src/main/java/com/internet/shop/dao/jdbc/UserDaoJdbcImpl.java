@@ -22,7 +22,7 @@ public class UserDaoJdbcImpl implements UserDao {
     @Override
     public Optional<User> findByLogin(String login) {
         User user;
-        String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
+        String query = "SELECT id, name, login, password, salt FROM users WHERE deleted = FALSE "
                 + "AND login = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -42,13 +42,14 @@ public class UserDaoJdbcImpl implements UserDao {
 
     @Override
     public User create(User user) {
-        String query = "INSERT INTO users(name, login, password) VALUES (?, ?, ?)";
+        String query = "INSERT INTO users(name, login, password, salt) VALUES (?, ?, ?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query,
                         Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getName());
             statement.setString(2, user.getLogin());
             statement.setString(3, user.getPassword());
+            statement.setBytes(4, user.getSalt());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
             while (resultSet.next()) {
@@ -64,7 +65,7 @@ public class UserDaoJdbcImpl implements UserDao {
     @Override
     public Optional<User> get(Long id) {
         User user;
-        String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE "
+        String query = "SELECT id, name, login, password, salt FROM users WHERE deleted = FALSE "
                 + "AND id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
@@ -116,7 +117,7 @@ public class UserDaoJdbcImpl implements UserDao {
     @Override
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
-        String query = "SELECT id, name, login, password FROM users WHERE deleted = FALSE";
+        String query = "SELECT id, name, login, password, salt FROM users WHERE deleted = FALSE";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
@@ -138,7 +139,8 @@ public class UserDaoJdbcImpl implements UserDao {
         String name = resultSet.getString("name");
         String login = resultSet.getString("login");
         String password = resultSet.getString("password");
-        return new User(id, name, login, password);
+        byte[] salt = resultSet.getBytes("salt");
+        return new User(id, name, login, password, salt);
     }
 
     private boolean createUsersRole(User user) {
