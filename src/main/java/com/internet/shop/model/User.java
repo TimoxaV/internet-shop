@@ -9,7 +9,24 @@ public class User {
     private String password;
     private Set<Role> roles;
 
+    public User() {
+    }
+
     public User(String name, String login, String password) {
+        this.name = name;
+        this.login = login;
+        this.password = password;
+    }
+
+    public User(String name, String login, String password, Set<Role> roles) {
+        this.name = name;
+        this.login = login;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public User(Long id, String name, String login, String password) {
+        this.id = id;
         this.name = name;
         this.login = login;
         this.password = password;
@@ -58,6 +75,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" + "id=" + id + ", name='" + name + '\'' + ", login='"
-                + login + '\'' + ", password='" + password + '\'' + '}';
+                + login + '\'' + ", password='" + password + '\'' + ", roles=" + roles + '}';
     }
 }
