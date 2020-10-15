@@ -3,6 +3,7 @@ package com.internet.shop;
 import com.internet.shop.lib.Injector;
 import com.internet.shop.model.Order;
 import com.internet.shop.model.Product;
+import com.internet.shop.model.Role;
 import com.internet.shop.model.ShoppingCart;
 import com.internet.shop.model.User;
 import com.internet.shop.service.OrderService;
@@ -10,6 +11,7 @@ import com.internet.shop.service.ProductService;
 import com.internet.shop.service.ShoppingCartService;
 import com.internet.shop.service.UserService;
 import java.math.BigDecimal;
+import java.util.Set;
 
 public class Application {
     private static Injector injector = Injector.getInstance("com.internet.shop");
@@ -47,9 +49,9 @@ public class Application {
         System.out.println("------------------------------------\n");
         System.out.println("Users");
         UserService userService = (UserService) injector.getInstance(UserService.class);
-        User user1 = new User("Bob", "bob", "111");
-        User user2 = new User("John", "john", "222");
-        User user3 = new User("Matt", "matt", "333");
+        User user1 = new User("Bob", "bob", "111", Set.of(Role.of("USER")));
+        User user2 = new User("John", "john", "222", Set.of(Role.of("USER")));
+        User user3 = new User("Matt", "matt", "333", Set.of(Role.of("USER")));
         userService.create(user1);
         userService.create(user2);
         userService.create(user3);

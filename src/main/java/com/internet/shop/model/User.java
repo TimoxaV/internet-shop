@@ -13,14 +13,10 @@ public class User {
     public User() {
     }
 
-    public User(String name, String login, String password) {
+    public User(String name, String login, String password, Set<Role> roles) {
         this.name = name;
         this.login = login;
         this.password = password;
-    }
-
-    public User(String name, String login, String password, Set<Role> roles) {
-        this(name, login, password);
         this.roles = roles;
     }
 
@@ -29,13 +25,11 @@ public class User {
         this.salt = salt;
     }
 
-    public User(Long id, String name, String login, String password) {
-        this(name, login, password);
-        this.id = id;
-    }
-
     public User(Long id, String name, String login, String password, byte[] salt) {
-        this(id, name, login, password);
+        this.id = id;
+        this.name = name;
+        this.login = login;
+        this.password = password;
         this.salt = salt;
     }
 
