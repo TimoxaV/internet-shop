@@ -39,6 +39,4 @@ Admin's actions:
 3) Run the script init_db.sql placed in 'resources' package
 4) Use your credentials in ConnectionUtil class
 
-[GitHub](https://github.com/TimoxaV/internet-shop) 
-
 [Author's profile](https://github.com/TimoxaV)
